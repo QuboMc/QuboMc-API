@@ -128,7 +128,11 @@ This project includes a `.gitignore` file to prevent committing sensitive or unn
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
-[MIT](LICENSE) 
+
+All rights reserved.
+
+This software and its source code are the exclusive property of ItzST4R name QuboMc.
+You may not use, copy, modify, merge, publish, distribute, sublicense, or sell copies of this software, in whole or in part, for any purpose, without explicit written permission from the copyright holder.
 
 ## TypeScript Modules & Advanced Features
 
