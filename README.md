@@ -39,43 +39,43 @@ node index.js
 ### Minecraft
 - **Get server status:**
   ```bash
-  curl http://localhost:3000/minecraft/status
+  curl https://qubomc.net/minecraft/status
   ```
 - **Send command:**
   ```bash
-  curl -X POST http://localhost:3000/minecraft/command \
+  curl -X POST https://qubomc.net/minecraft/command \
     -H "Content-Type: application/json" \
     -d '{"command": "say Hello from API!"}'
   ```
 - **List players:**
   ```bash
-  curl http://localhost:3000/minecraft/players
+  curl https://qubomc.net/minecraft/players
   ```
 
 ### Discord
 - **Get bot status:**
   ```bash
-  curl http://localhost:3000/discord/status
+  curl https://qubomc.net/discord/status
   ```
 - **Send message:**
   ```bash
-  curl -X POST http://localhost:3000/discord/send-message \
+  curl -X POST https://qubomc.net/discord/send-message \
     -H "Content-Type: application/json" \
     -d '{"channelId": "YOUR_CHANNEL_ID", "message": "Hello from API!"}'
   ```
 - **Get bot info:**
   ```bash
-  curl http://localhost:3000/discord/bot-info
+  curl https://qubomc.net/discord/bot-info
   ```
 
 ### Mod
 - **Get mod status:**
   ```bash
-  curl http://localhost:3000/mod/status
+  curl https://qubomc.net/mod/status
   ```
 - **Send event:**
   ```bash
-  curl -X POST http://localhost:3000/mod/event \
+  curl -X POST https://qubomc.net/mod/event \
     -H "Content-Type: application/json" \
     -d '{"secret": "YOUR_MOD_SECRET", "event": "custom_event", "data": {"foo": "bar"}}'
   ```
@@ -129,3 +129,40 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ## License
 [MIT](LICENSE) 
+
+## TypeScript Modules & Advanced Features
+
+### Shared Types
+- `types/events.ts`: Type definitions for Minecraft, Discord, and Mod events.
+- `types/webhook.ts`: Type definitions for webhook registration and payloads.
+
+### Utilities
+- `utils/validateEnv.ts`: Validates required environment variables at startup. Usage:
+  ```ts
+  import { validateEnv } from './utils/validateEnv';
+  validateEnv(); // Throws if any required env var is missing
+  ```
+
+### Middleware
+- `middleware/auth.ts`: Express middleware for API key authentication. Usage:
+  ```ts
+  import { apiKeyAuth } from './middleware/auth';
+  app.use(apiKeyAuth); // Protects all routes
+  // or
+  app.get('/protected', apiKeyAuth, handler);
+  ```
+  Add your API key to `.env` as `API_KEY=your_key_here`.
+
+### Services
+- `services/webhookService.ts`: Service for registering, listing, and triggering webhooks. Usage:
+  ```ts
+  import { registerWebhook, listWebhooks, triggerWebhooks } from './services/webhookService';
+  registerWebhook({ url: 'https://example.com', event: 'minecraft_command' });
+  await triggerWebhooks('minecraft_command', { command: 'say Hello' });
+  ```
+
+### TypeScript Best Practices
+- Use `.ts` files for new modules and features.
+- Use type definitions for request bodies, events, and configs.
+- Run `tsc` to compile TypeScript to JavaScript before deploying.
+- Keep shared types in the `types/` directory for easy reuse. 
