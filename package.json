@@ -2,11 +2,11 @@
   "name": "qubomc-api",
   "version": "1.2.0",
   "description": "Unified API for QuboMc Minecraft server, QuboDc Discord bot, and Qubo mod.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node index.js",
     "dev": "ts-node-dev --respawn --transpile-only index.ts"
   },
   "repository": {
