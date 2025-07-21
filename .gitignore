@@ -4,6 +4,9 @@ node_modules/
 # Environment variables
 .env
 
+# Cu Managent
+deliver.cu
+
 # Logs
 logs/
 *.log
@@ -20,3 +23,6 @@ Thumbs.db
 .env.development.local
 .env.test.local
 .env.production.local 
+
+# Webhooks
+webhooks.json 

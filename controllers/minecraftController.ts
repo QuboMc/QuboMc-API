@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Rcon } from 'rcon-client';
+import logger from '../utils/logger';
 
 const host = process.env.MINECRAFT_HOST!;
 const port = Number(process.env.MINECRAFT_PORT!);
@@ -29,12 +30,13 @@ export async function sendCommand(req: Request, res: Response) {
   if (!command) return res.status(400).json({ error: 'Missing command' });
   try {
     const response = await withRcon(rcon => rcon.send(command));
-    console.log(`[Minecraft] Command sent: ${command}`);
+    logger.info(`[Minecraft] Command sent: ${command}`);
     if (global.triggerWebhooks) {
       global.triggerWebhooks('minecraft_command', { command });
     }
     res.json({ response });
   } catch (err: any) {
+    logger.error(`[Minecraft] Failed to send command: ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 }

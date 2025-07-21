@@ -2,11 +2,13 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+import logger from './utils/logger';
+
 app.use(express.json());
 
 // --- Request Logger Middleware ---
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  logger.http(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
 
@@ -44,32 +46,21 @@ app.post('/webhook/receive', (req, res) => {
 });
 
 // Helper to trigger webhooks for an event
-global.triggerWebhooks = async function(event, data) {
-  const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-  for (const wh of webhooks) {
-    if (wh.event === event) {
-      try {
-        await fetch(wh.url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ event, data })
-        });
-        console.log(`Webhook sent to ${wh.url} for event ${event}`);
-      } catch (err) {
-        console.error(`Failed to send webhook to ${wh.url}:`, err.message);
-      }
-    }
-  }
-};
+// This should be moved to the webhookService
+// global.triggerWebhooks = async function(event, data) { ... }
 
 // Import routes
 const minecraftRoutes = require('./routes/minecraft');
 const discordRoutes = require('./routes/discord');
 const modRoutes = require('./routes/mod');
+const healthRoutes = require('./routes/health'); // Assuming TS is compiled
+const webhookRoutes = require('./routes/webhook');
 
 app.use('/minecraft', minecraftRoutes);
 app.use('/discord', discordRoutes);
 app.use('/mod', modRoutes);
+app.use('/health', healthRoutes.default); // Use .default for ES module exports from TS
+app.use('/webhook', webhookRoutes.default);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -78,10 +69,10 @@ app.get('/', (req, res) => {
 
 // --- Centralized Error Handler ---
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  logger.error(err.stack); // Log the full stack trace
   res.status(err.status || 500).json({ error: err.message || 'Internal Server Error' });
 });
 
 app.listen(PORT, () => {
-  console.log(`QuboMc-API server running on port ${PORT}`);
+  logger.info(`QuboMc-API server running on port ${PORT}`);
 }); 

@@ -21,9 +21,11 @@
   "dependencies": {
     "discord.js": "^14.0.0",
     "express": "^4.18.2",
-    "rcon-client": "^4.2.5",
+    "rcon-client": "^4.0.5",
     "dotenv": "^16.0.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "winston": "^3.8.2",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

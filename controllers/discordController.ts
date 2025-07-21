@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Client, GatewayIntentBits, TextChannel } from 'discord.js';
+import logger from '../utils/logger';
 
 const token = process.env.DISCORD_BOT_TOKEN!;
 const clientId = process.env.DISCORD_CLIENT_ID!;
@@ -26,12 +27,13 @@ export async function sendMessage(req: Request, res: Response) {
     const channel = await client.channels.fetch(channelId);
     if (!channel || !(channel instanceof TextChannel)) throw new Error('Channel not found or not a text channel');
     await channel.send(message);
-    console.log(`[Discord] Message sent to channel ${channelId}: ${message}`);
+    logger.info(`[Discord] Message sent to channel ${channelId}: ${message}`);
     if (global.triggerWebhooks) {
       global.triggerWebhooks('discord_send_message', { channelId, message });
     }
     res.json({ success: true });
   } catch (err: any) {
+    logger.error(`[Discord] Failed to send message: ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 }

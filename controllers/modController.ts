@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import logger from '../utils/logger';
 
 const modSecret = process.env.MOD_SECRET!;
 
@@ -14,7 +15,7 @@ export async function handleEvent(req: Request, res: Response) {
   if (!event) {
     return res.status(400).json({ error: 'Missing event type' });
   }
-  console.log(`[Mod] Event received: ${event}`, data);
+  logger.info(`[Mod] Event received: ${event}`, data);
   if (global.triggerWebhooks) {
     global.triggerWebhooks('mod_event', { event, data });
   }

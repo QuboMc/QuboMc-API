@@ -158,7 +158,7 @@ You may not use, copy, modify, merge, publish, distribute, sublicense, or sell c
   Add your API key to `.env` as `API_KEY=your_key_here`.
 
 ### Services
-- `services/webhookService.ts`: Service for registering, listing, and triggering webhooks. Usage:
+- `services/webhookService.ts`: Service for registering, listing, and triggering webhooks. **Webhooks are stored persistently in `webhooks.json`**. Usage:
   ```ts
   import { registerWebhook, listWebhooks, triggerWebhooks } from './services/webhookService';
   registerWebhook({ url: 'https://example.com', event: 'minecraft_command' });
