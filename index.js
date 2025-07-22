@@ -1,10 +1,17 @@
 const express = require('express');
+const compression = require('compression');
+const helmet = require('helmet');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-import logger from './utils/logger';
+const logger = require('./utils/logger').default || require('./utils/logger');
 
 app.use(express.json());
+// Apply common security headers
+app.use(helmet());
+
+// Enable gzip compression for all responses
+app.use(compression());
 
 // --- Request Logger Middleware ---
 app.use((req, res, next) => {
@@ -15,19 +22,37 @@ app.use((req, res, next) => {
 // --- Simple In-Memory Rate Limiter Middleware ---
 const rateLimitWindowMs = 60 * 1000; // 1 minute
 const rateLimitMax = 60; // 60 requests per window per IP
-const ipHits = {};
+// Use a Map to avoid unbounded object growth and allow easier cleanup
+const ipHits = new Map(); // Map<string, number[]>
+
 app.use((req, res, next) => {
   const ip = req.ip;
   const now = Date.now();
-  if (!ipHits[ip]) ipHits[ip] = [];
-  ipHits[ip] = ipHits[ip].filter(ts => now - ts < rateLimitWindowMs);
-  if (ipHits[ip].length >= rateLimitMax) {
+
+  let hits = ipHits.get(ip) || [];
+  hits = hits.filter((timestamp) => now - timestamp < rateLimitWindowMs);
+
+  if (hits.length >= rateLimitMax) {
     return res.status(429).json({ error: 'Too many requests, slow down!' });
   }
-  ipHits[ip].push(now);
+
+  hits.push(now);
+  ipHits.set(ip, hits);
   next();
 });
 
+// Periodically clean the Map to free memory of inactive IPs
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, timestamps] of ipHits.entries()) {
+    const recent = timestamps.filter((ts) => now - ts < rateLimitWindowMs);
+    if (recent.length > 0) {
+      ipHits.set(ip, recent);
+    } else {
+      ipHits.delete(ip);
+    }
+  }
+}, rateLimitWindowMs);
 // --- In-Memory Webhook Store ---
 const webhooks = [];
 
