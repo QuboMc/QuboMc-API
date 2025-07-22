@@ -2,6 +2,7 @@ import { WebhookRegistration, WebhookPayload } from '../types/webhook';
 import logger from '../utils/logger';
 import fs from 'fs/promises';
 import path from 'path';
+import fetch from 'node-fetch';
 
 const webhooksFilePath = path.join(__dirname, '../../webhooks.json');
 let webhooks: WebhookRegistration[] = [];
@@ -11,7 +12,7 @@ async function loadWebhooks() {
     const data = await fs.readFile(webhooksFilePath, 'utf-8');
     webhooks = JSON.parse(data);
     logger.info(`Loaded ${webhooks.length} webhooks from file.`);
-  } catch (error) {
+  } catch (error: any) {
     if (error.code === 'ENOENT') {
       logger.warn('webhooks.json not found. Starting with an empty list.');
       webhooks = [];
@@ -39,9 +40,9 @@ export function listWebhooks(): WebhookRegistration[] {
 }
 
 export async function triggerWebhooks<T>(event: string, data: T) {
-  const fetch = (...args: any[]) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-  for (const wh of webhooks) {
-    if (wh.event === event) {
+  const promises = webhooks
+    .filter(wh => wh.event === event)
+    .map(async (wh) => {
       try {
         await fetch(wh.url, {
           method: 'POST',
@@ -52,8 +53,10 @@ export async function triggerWebhooks<T>(event: string, data: T) {
       } catch (err: any) {
         logger.error(`Failed to send webhook to ${wh.url}:`, err.message);
       }
-    }
-  }
+    });
+  
+  // Execute all webhook calls in parallel for better performance
+  await Promise.allSettled(promises);
 }
 
 // Load webhooks on service initialization
