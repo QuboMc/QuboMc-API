@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AnyZodObject } from 'zod';
 import logger from '../utils/logger';
 
-const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction) => {
+const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction): void => {
   try {
     schema.parse({
       body: req.body,
@@ -12,7 +12,8 @@ const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: N
     next();
   } catch (e: any) {
     logger.error(`Validation Error: ${e.errors.map((err: any) => err.message).join(', ')}`);
-    return res.status(400).send(e.errors);
+    res.status(400).send(e.errors);
+    return;
   }
 };
 

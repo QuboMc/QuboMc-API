@@ -1,0 +1,1 @@
+{"version":3,"file":"minecraftSchema.js","sourceRoot":"","sources":["../../schemas/minecraftSchema.ts"],"names":[],"mappings":";;;AAAA,6BAAwB;AAEX,QAAA,iBAAiB,GAAG,OAAC,CAAC,MAAM,CAAC;IACxC,IAAI,EAAE,OAAC,CAAC,MAAM,CAAC;QACb,OAAO,EAAE,OAAC,CAAC,MAAM,CAAC;YAChB,cAAc,EAAE,qBAAqB;SACtC,CAAC,CAAC,GAAG,CAAC,CAAC,EAAE,yBAAyB,CAAC;KACrC,CAAC;CACH,CAAC,CAAC"}

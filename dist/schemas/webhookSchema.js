@@ -8,3 +8,4 @@ exports.registerWebhookSchema = zod_1.z.object({
         event: zod_1.z.string().min(1, 'Event name is required'),
     }),
 });
+//# sourceMappingURL=webhookSchema.js.map

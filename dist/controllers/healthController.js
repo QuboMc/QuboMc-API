@@ -48,3 +48,4 @@ async function getHealth(req, res) {
         },
     });
 }
+//# sourceMappingURL=healthController.js.map

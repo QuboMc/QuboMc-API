@@ -11,3 +11,4 @@ const router = express_1.default.Router();
 router.post('/', (0, validateResource_1.default)(webhookSchema_1.registerWebhookSchema), webhookController_1.registerWebhookHandler);
 router.get('/', webhookController_1.listWebhooksHandler);
 exports.default = router;
+//# sourceMappingURL=webhook.js.map

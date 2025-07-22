@@ -35,3 +35,4 @@ const logger = winston_1.default.createLogger({
     transports,
 });
 exports.default = logger;
+//# sourceMappingURL=logger.js.map

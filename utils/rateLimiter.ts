@@ -31,8 +31,8 @@ class MemoryRateLimiter {
   }
 
   middleware() {
-    return (req: Request, res: Response, next: NextFunction) => {
-      const key = this.config.keyGenerator ? this.config.keyGenerator(req) : req.ip;
+    return (req: Request, res: Response, next: NextFunction): void => {
+      const key = this.config.keyGenerator ? this.config.keyGenerator(req) : (req.ip || 'unknown');
       const now = Date.now();
       
       if (!this.hits.has(key)) {
@@ -44,10 +44,11 @@ class MemoryRateLimiter {
       
       if (validHits.length >= this.config.maxRequests) {
         logger.warn(`Rate limit exceeded for ${key}`);
-        return res.status(429).json({ 
+        res.status(429).json({ 
           error: 'Too many requests, slow down!',
           retryAfter: Math.ceil(this.config.windowMs / 1000)
         });
+        return;
       }
       
       validHits.push(now);

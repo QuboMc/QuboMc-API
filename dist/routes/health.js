@@ -8,3 +8,4 @@ const healthController_1 = require("../controllers/healthController");
 const router = express_1.default.Router();
 router.get('/', healthController_1.getHealth);
 exports.default = router;
+//# sourceMappingURL=health.js.map
